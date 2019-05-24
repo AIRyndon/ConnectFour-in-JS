@@ -1,0 +1,21 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Connect 4</h1>
+</div>
+<div id="board">
+    @for (int column = 0; column < 6; column++)
+    {
+        <div class="column" id="@column">
+            @for (int row = 5; row >= 0; row--)
+            {
+                <div class="row" id="col@(column)row@(row)"></div>
+            }
+        </div>
+    }
+</div>
+
