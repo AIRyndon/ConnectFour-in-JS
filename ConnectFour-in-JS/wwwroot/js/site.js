@@ -48,6 +48,50 @@ $(function () {
         this.piece;
     }
 
+    function CheckRow(board, node) {
+        var countLeft = 0;
+        var countRight = 0;
+        var lastDropped = 1;
+
+        countLeft = CheckLeft(board, node, countLeft);
+
+        if (countLeft < 3) {
+            countRight = CheckRight(board, node, countRight);
+        }
+
+        return lastDropped + countLeft + countRight;
+    }
+
+    function CheckLeft(board, node, count) {
+        var columnLeft;
+
+        if (node.column > 0 && count < 3) {
+            columnLeft = board[node.row][node.column - 1];
+
+            if (node.piece === columnLeft.piece) {
+                ++count;
+
+                return CheckLeft(board, columnLeft, count);
+            }
+        }
+        return count;
+    }
+
+    function CheckRight(board, node, count) {
+        var columnRight;
+
+        if (node.column > 0 && count < 3) {
+            columnRight = board[node.row][node.column + 1];
+
+            if (node.piece === columnRight.piece) {
+                ++count;
+
+                return CheckRight(board, columnRight, count);
+            }
+        }
+        return count;
+    }
+
     function CheckColumn(board, node) {
         var count = 0;
         var lastDropped = 1;
@@ -69,7 +113,7 @@ $(function () {
                 return CheckDownward(board, rowDown, count);
             }
         }
-    
+
         return count;
     }
 
@@ -83,6 +127,10 @@ $(function () {
 
         connectFour = CheckColumn(board, node);
 
+        if (connectFour < 4) {
+            connectFour = CheckRow(board, node);
+        }
+
         console.log(connectFour);
     }
 
@@ -93,11 +141,11 @@ $(function () {
         for (var row = 5; row >= 0; row--) {
             console.log(board[row][button.id]);
             var node = board[row][button.id];
-            
+
             if (!node.isFilled) {
                 currentNode = node;
                 ++turns;
-                FillNode(node, true,playerTurn);
+                FillNode(node, true, playerTurn);
                 var elem = $('#col' + button.id + 'row' + row).addClass(playerTurn);
 
                 if (playerTurn === players.playerOne) {
@@ -116,10 +164,10 @@ $(function () {
             console.log('At turns');
             console.log(turns);
             CheckWinner(board, currentNode);
-        }    
+        }
     }
 
-    
+
 
     //##############Checking functions######################
 
