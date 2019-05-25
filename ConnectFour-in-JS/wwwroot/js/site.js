@@ -66,14 +66,16 @@ $(function () {
         var columnLeft;
 
         if (node.column > 0 && count < 3) {
+
             columnLeft = board[node.row][node.column - 1];
 
             if (node.piece === columnLeft.piece) {
-                ++count;
 
+                ++count;
                 return CheckLeft(board, columnLeft, count);
             }
         }
+
         return count;
     }
 
@@ -84,11 +86,12 @@ $(function () {
             columnRight = board[node.row][node.column + 1];
 
             if (node.piece === columnRight.piece) {
-                ++count;
 
+                ++count;
                 return CheckRight(board, columnRight, count);
             }
         }
+
         return count;
     }
 
@@ -108,9 +111,55 @@ $(function () {
             rowDown = board[node.row + 1][node.column];
 
             if (node.piece === rowDown.piece) {
-                ++count;
 
+                ++count;
                 return CheckDownward(board, rowDown, count);
+            }
+        }
+
+        return count;
+    }
+
+    function CheckFwdDiag(board, node) {
+        var fwdDiagUp = 0;
+        var fwdDiagDown = 0;
+        var lastDropped = 1;
+
+        fwdDiagUp = CheckFwdDiagUp(board, node, fwdDiagUp);
+
+        if (fwdDiagUp < 3) {
+            fwdDiagDown = CheckFwdDiagDown(board, node, fwdDiagDown);
+        }
+
+        return lastDropped + fwdDiagUp + fwdDiagDown;
+    }
+
+    function CheckFwdDiagUp(board, node, count) {
+
+        var diagUp;
+        if (node.row > 0 && node.column < 6 && count < 3) {
+            diagUp = board[node.row - 1][node.column + 1];
+
+            if (node.piece === diagUp.piece) {
+
+                ++count;
+                return CheckFwdDiagUp(board, diagUp, count);
+            }
+        }
+
+        return count;
+    }
+
+    function CheckFwdDiagDown(board, node, count) {
+
+        var diagDown;
+        if (node.row < 5 && node.column > 0 && count < 3) {
+            diagDown = board[node.row + 1][node.column - 1];
+
+            if (node.piece === diagDown.piece) {
+
+                ++count;
+                return CheckFwdDiagDown(board, diagDown, count);
             }
         }
 
@@ -131,6 +180,10 @@ $(function () {
             connectFour = CheckRow(board, node);
         }
 
+        if (connectFour < 4) {
+            connectFour = CheckFwdDiag(board, node);
+        }
+
         console.log(connectFour);
     }
 
@@ -138,6 +191,7 @@ $(function () {
 
         var button = this;
         console.log(board);
+
         for (var row = 5; row >= 0; row--) {
             console.log(board[row][button.id]);
             var node = board[row][button.id];
@@ -154,14 +208,12 @@ $(function () {
                 else {
                     playerTurn = players.playerOne;
                 }
-                console.log(turns);
 
                 break;
             }
         }
 
         if (turns > 6) {
-            console.log('At turns');
             console.log(turns);
             CheckWinner(board, currentNode);
         }
