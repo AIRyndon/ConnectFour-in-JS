@@ -8,10 +8,11 @@
     <h1 class="display-4">Connect 4</h1>
 </div>
 <div id="board">
-    @for (int column = 0; column < 6; column++)
+    @for (int column = 0; column < 7; column++)
     {
         <div class="column" id="@column">
-            @for (int row = 5; row >= 0; row--)
+            <button class="column btn btn-light">Drop Here</button>
+            @for (int row = 0; row < 6; row++)
             {
                 <div class="row" id="col@(column)row@(row)"></div>
             }
