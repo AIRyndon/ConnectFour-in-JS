@@ -24,13 +24,13 @@ $(function () {
     function LoopThroughBoard(board, callback) {
 
         for (var row = 0; row < 6; row++) {
+
             board[row] = [];
 
             for (var column = 0; column < 7; column++) {
                 callback(board, row, column);
             }
         }
-        console.log(board);
     }
 
     function FillNode(node, isFilled, piece) {
@@ -48,6 +48,7 @@ $(function () {
     }
 
     function CheckRow(board, node) {
+
         var countLeft = 0;
         var countRight = 0;
         var lastDropped = 1;
@@ -246,24 +247,19 @@ $(function () {
     function UpdateBoardState(event) {
 
         var button = this;
-        console.log(board);
 
         for (var row = 5; row >= 0; row--) {
-            console.log(board[row][button.id]);
+
             var node = board[row][button.id];
 
             if (!node.isFilled) {
+
                 currentNode = node;
                 ++turns;
+
                 FillNode(node, true, playerTurn);
                 $('#col' + button.id + 'row' + row).addClass(playerTurn);
-
-                if (playerTurn === players.playerOne) {
-                    playerTurn = players.playerTwo;
-                }
-                else {
-                    playerTurn = players.playerOne;
-                }
+                UpdatePlayerTurn();
 
                 break;
             }
@@ -278,16 +274,28 @@ $(function () {
         }
     }
 
+    function UpdatePlayerTurn() {
+        var elem = document.querySelector('h1.display-4');
+
+        if (playerTurn === 'player-one') {
+            elem.innerHTML = 'Player Two';
+            playerTurn = players.playerTwo;
+        }
+        else {
+            elem.innerHTML = 'Player One';
+            playerTurn = players.playerOne;
+        }
+    }
+
     //############################################################
     //Starting board
 
     LoopThroughBoard(board, InitiateBoard);
 
-
     //##############################################
     //Register click events
     var buttons = document.querySelectorAll('button.column');
-    console.log(buttons);
+
     for (var index = 0; index < buttons.length; index++) {
         buttons[index].addEventListener('click', UpdateBoardState);
     }

@@ -6,13 +6,13 @@
 
 <div class="text-center">
     <h1 class="display-3">Connect 4</h1>
-    <h1 class="display-4">Player 1</h1>
+    <h1 class="display-4">Player One</h1>
 </div>
 <div id="board">
     @for (int column = 0; column < 7; column++)
     {
         <div class="column">
-            <button class="column btn btn-light" id="@column">Drop Here</button>
+            <button class="column btn btn-light" id="@column">Disc Here</button>
             @for (int row = 0; row < 6; row++)
             {
                 <div class="row" id="col@(column)row@(row)"></div>
