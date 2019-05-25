@@ -7,7 +7,6 @@ $(function () {
 
     var board = [];
     var turns = 0;
-    var winner = 0;
     var players = {
         playerOne: 'player-one',
         playerTwo: 'player-two'
@@ -82,7 +81,7 @@ $(function () {
     function CheckRight(board, node, count) {
         var columnRight;
 
-        if (node.column > 0 && count < 3) {
+        if (node.column < 6 && count < 3) {
             columnRight = board[node.row][node.column + 1];
 
             if (node.piece === columnRight.piece) {
@@ -166,13 +165,58 @@ $(function () {
         return count;
     }
 
+    function CheckBackDiag(board, node) {
+        var backDiagUp = 0;
+        var backDiagDown = 0;
+        var lastDropped = 1;
+
+        backDiagUp = CheckBackDiagUp(board, node, backDiagUp);
+
+        if (backDiagUp < 3) {
+            backDiagDown = CheckBackDiagDown(board, node, backDiagDown);
+        }
+
+        return lastDropped + backDiagUp + backDiagDown;
+    }
+
+    function CheckBackDiagUp(board, node, count) {
+
+        var nextNode;
+        if (node.row > 0 && node.column > 0 && count < 3) {
+            nextNode = board[node.row - 1][node.column - 1];
+
+            if (node.piece === nextNode.piece) {
+
+                ++count;
+                return CheckBackDiagUp(board, nextNode, count);
+            }
+        }
+
+        return count;
+    }
+
+    function CheckBackDiagDown(board, node, count) {
+
+        var nextNode;
+        if (node.row < 5 && node.column < 6 && count < 3) {
+            nextNode = board[node.row + 1][node.column + 1];
+
+            if (node.piece === nextNode.piece) {
+
+                ++count;
+                return CheckBackDiagDown(board, nextNode, count);
+            }
+        }
+
+        return count;
+    }
+
     function CheckWinner(board, node) {
 
         console.log(board);
         console.log(node);
 
         var connectFour = 0;
-        var gameWon = 0;
 
         connectFour = CheckColumn(board, node);
 
@@ -184,7 +228,19 @@ $(function () {
             connectFour = CheckFwdDiag(board, node);
         }
 
-        console.log(connectFour);
+        if (connectFour < 4) {
+            connectFour = CheckBackDiag(board, node);
+        }
+
+        if (connectFour === 4) {
+
+            if (playerTurn === 'player-one') {
+                alert('Player Two won this game!');
+            }
+            else {
+                alert('Player One won this game!');
+            }
+        }
     }
 
     function UpdateBoardState(event) {
@@ -200,7 +256,7 @@ $(function () {
                 currentNode = node;
                 ++turns;
                 FillNode(node, true, playerTurn);
-                var elem = $('#col' + button.id + 'row' + row).addClass(playerTurn);
+                $('#col' + button.id + 'row' + row).addClass(playerTurn);
 
                 if (playerTurn === players.playerOne) {
                     playerTurn = players.playerTwo;
@@ -213,20 +269,17 @@ $(function () {
             }
         }
 
-        if (turns > 6) {
+        if (turns > 6 && turns < 42) {
             console.log(turns);
             CheckWinner(board, currentNode);
         }
+        else if (turns >= 42) {
+            alert('It is a tie! No one won this game.');
+        }
     }
 
-
-
-    //##############Checking functions######################
-
-
-
     //############################################################
-    //Initial board
+    //Starting board
 
     LoopThroughBoard(board, InitiateBoard);
 
@@ -239,5 +292,4 @@ $(function () {
         buttons[index].addEventListener('click', UpdateBoardState);
     }
 
-    //#########################################
 });
