@@ -7,14 +7,28 @@ $(function () {
 
     var board = [];
     var turns = 0;
+    var gameWon = false;
+    var statusText = document.querySelector('h1.display-4');
     var players = {
         playerOne: 'player-one',
         playerTwo: 'player-two'
     };
-
     var playerTurn = players.playerOne;
-    var currentNode;
+    var currentNode = Object;
 
+    //##############################################
+    //Register click events
+
+    var buttons = document.querySelectorAll('button.column');
+
+    for (var index = 0; index < buttons.length; index++) {
+        buttons[index].addEventListener('click', UpdateBoardState);
+    }
+
+    document.getElementById('reset').querySelector('button')
+        .addEventListener('click', ResetGame);  
+
+    //##############################################
     function InitiateBoard(board, row, column) {
 
         board[row][column] = new Node(row, column);
@@ -214,9 +228,6 @@ $(function () {
 
     function CheckWinner(board, node) {
 
-        console.log(board);
-        console.log(node);
-
         var connectFour = 0;
 
         connectFour = CheckColumn(board, node);
@@ -235,12 +246,17 @@ $(function () {
 
         if (connectFour === 4) {
 
-            if (playerTurn === 'player-one') {
-                alert('Player Two won this game!');
-            }
-            else {
-                alert('Player One won this game!');
-            }
+            gameWon = true;
+            DisableDiscButtons(true);
+
+            playerTurn === 'player-one' ? statusText.innerHTML = 'Player Two Won!'
+                : statusText.innerHTML = 'Player One Won!';
+        }
+    }
+
+    function DisableDiscButtons(bool) {
+        for (var index = 0; index < buttons.length; index++) {
+            buttons[index].disabled = bool;
         }
     }
 
@@ -258,46 +274,56 @@ $(function () {
                 ++turns;
 
                 FillNode(node, true, playerTurn);
-                $('#col' + button.id + 'row' + row).addClass(playerTurn);
+                document.getElementById('col' + button.id + 'row' + row).classList.add(playerTurn);
+
                 UpdatePlayerTurn();
 
                 break;
             }
         }
 
-        if (turns > 6 && turns < 42) {
-            console.log(turns);
+        if (turns > 6 && turns <= 42) {
             CheckWinner(board, currentNode);
         }
-        else if (turns >= 42) {
-            alert('It is a tie! No one won this game.');
+
+        if (turns >= 42 && !gameWon) {          
+            statusText.innerHTML = 'Its a tie! No one won this game.';
         }
     }
 
     function UpdatePlayerTurn() {
-        var elem = document.querySelector('h1.display-4');
 
         if (playerTurn === 'player-one') {
-            elem.innerHTML = 'Player Two';
+            statusText.innerHTML = 'Player Two';
             playerTurn = players.playerTwo;
         }
         else {
-            elem.innerHTML = 'Player One';
+            statusText.innerHTML = 'Player One';
             playerTurn = players.playerOne;
         }
+    }
+
+    function ResetGame() {
+
+        turns = 0;
+        gameWon = false;
+        playerTurn = players.playerOne;
+        currentNode = Object;
+        statusText.innerHTML = 'Player One';
+
+        var cells = document.querySelectorAll('div.row');
+
+        for (var index = 0; index < cells.length; index++) {
+            cells[index].className = 'row';
+        }
+
+        DisableDiscButtons(false);
+        LoopThroughBoard(board, InitiateBoard);
     }
 
     //############################################################
     //Starting board
 
     LoopThroughBoard(board, InitiateBoard);
-
-    //##############################################
-    //Register click events
-    var buttons = document.querySelectorAll('button.column');
-
-    for (var index = 0; index < buttons.length; index++) {
-        buttons[index].addEventListener('click', UpdateBoardState);
-    }
 
 });
