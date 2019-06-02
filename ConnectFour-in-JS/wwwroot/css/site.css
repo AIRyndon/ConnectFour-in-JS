@@ -97,16 +97,16 @@ body {
     background-color: #a9f121;
 }
 
-#reset {
-    margin: 10px auto;
-    width: 80%;
-}
-
 @media (min-width: 320px) {
     
     #board{
         height:100%;
         width:100%;
+    }
+
+    #reset {
+        margin: 10px auto;
+        width: 100%;
     }
 
     .row {
@@ -118,6 +118,11 @@ body {
 
     #board {
         height: 80%;
+        width: 80%;
+    }
+
+    #reset {
+        margin: 10px auto;
         width: 80%;
     }
 
